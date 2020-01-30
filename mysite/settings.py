@@ -26,7 +26,7 @@ SECRET_KEY = 'z^u_u)6yof!0%k$#bq8(bo%^18b#d((&!edo0=pmyj4w^j%e$f'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-"jakesablee.pythonanywhere.com"
+"*"
 ]
 
 
