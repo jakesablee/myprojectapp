@@ -14,7 +14,7 @@ def register(request):
 		if form.is_valid():
 			new_user = form.save(commit=False)
 			username=form.cleaned_data.get('username')
-			messages.success(request,f'Ваш аккаунт создан {username}')
+			messages.success(request,'Ваш аккаунт создан')
 			new_user.save()
 			profile = Profile.objects.create(user=new_user)
 			return redirect("Home")
