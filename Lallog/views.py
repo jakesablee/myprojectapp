@@ -3,14 +3,15 @@ from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
 from .forms import PostForm
 from .models import Lalo,TestOrder
 from orders.models import Order
-from django.http import HttpResponse 
+from django.http import HttpResponse
 from django.utils import timezone
 import datetime
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.core import serializers
-
+import requests
+from curier.models import Curier,Changes
 def index(request):
 
 	return render(request,"Lallog/index.html")
@@ -51,7 +52,7 @@ def post_new(request):
 		return render(request,"Lallog/add_post.html",context=data)
 @csrf_exempt
 def get_calcul(request):
-	mydata = json.loads(request.body)
+	mydata = json.loads(request.read().decode('utf-8'))
 	print(mydata)
 	order = TestOrder(
 		client = request.user,
@@ -71,6 +72,8 @@ def get_calcul(request):
 		raschet=mydata.get("raschet")
 		)
 	order.save()
+	text="Новый заказ"+order.from_address+" "+order.to+" "+order.to_date_until
+	sendFromTelegram("-366408539",text)
 	otvet = {
 	"message":"Заявка отправлена!",
 	"arr":json.dumps(mydata)
@@ -79,10 +82,15 @@ def get_calcul(request):
 # Create your views here.
 @csrf_exempt
 def status_change(request):
-	mydata = json.loads(request.body)
-	print(mydata)
+	mydata = json.loads(request.read().decode('utf-8'))
 	current_test_order=  TestOrder.objects.get(pk=int(mydata.get("id")))
 	current_test_order.status = mydata.get("value")
+	if current_test_order.status =="Забрал":
+		change = Changes.objects.create(user=request.user.mycurier,balance_before=0,summa=((current_test_order.itog*35)//100),reason="Забрал заказ")
+		change.save()
+		current_test_order.curier.balance-=(current_test_order.itog*35)//100
+		print(current_test_order.itog)
+		current_test_order.curier.save()
 	current_test_order.save()
 	otvet = {
 	"message":"Заявка отправлена!",
@@ -92,8 +100,8 @@ def status_change(request):
 def all_curier_data(request):
 	curier = request.user.mycurier
 	today  = timezone.now()
-	all_empty_orders = TestOrder.objects.all().filter(curier=None)
-	orders = curier.choiced_curier.all()
+	
+	orders = curier.choiced_curier.all().exclude(status="Доставлен")
 	orders_json = []
 	for i in orders:
 		obj={
@@ -110,6 +118,11 @@ def all_curier_data(request):
 		orders_json.append(obj)
 	cxt={
 	    'orders':orders_json,
-	    'empty_orders':serializers.serialize("json",all_empty_orders)
+	   
 	}
-	return JsonResponse(cxt)	
+	return JsonResponse(cxt)
+def sendFromTelegram(chat_id,text):
+	url="https://api.telegram.org/bot750959409:AAHp1yaOSkMhvwdWVbxZMIw9H-Au8oCWJtA/"
+	params = {'chat_id': chat_id, 'text': text}
+	method = 'sendMessage'
+	resp = requests.post(url + method, params)

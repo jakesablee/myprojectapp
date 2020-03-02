@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
+# import locale
+# locale.setlocale(locale.LC_ALL,"ru_RU.utf8")
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,6 +46,10 @@ INSTALLED_APPS = [
     'curier',
     'orders',
     'Map',
+    "adminapp",
+    'import_export',
+    'dal',
+    'dal_select2'
 ]
 
 MIDDLEWARE = [
@@ -111,13 +116,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -127,9 +132,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS=(
-os.path.join(BASE_DIR, 'static'),
-    )
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -146,3 +149,7 @@ EMAIL_HOST_USER='tleugazy98@gmail.com'
 EMAIL_HOST_PASSWORD='sabina1998'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
+
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

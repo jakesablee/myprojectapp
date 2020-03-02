@@ -56,9 +56,7 @@ class TestOrder(models.Model):
 			self.curier_money = (self.itog*65)//100
 			super(TestOrder,self).save(force_insert,force_update,*args,**kwargs)
 		elif self.curier != self.__origin_curier:
-			self.curier.balance-=(self.itog*35)//100
 			if self.curier.balance>=0:
-				self.curier.save()
 				super(TestOrder,self).save(force_insert,force_update,*args,**kwargs)
 				self.__origin_curier = self.curier
 		else:
