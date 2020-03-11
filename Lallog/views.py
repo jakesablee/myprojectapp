@@ -78,6 +78,7 @@ def get_calcul(request):
 	"message":"Заявка отправлена!",
 	"arr":json.dumps(mydata)
 	}
+	
 	return JsonResponse(otvet)
 # Create your views here.
 @csrf_exempt

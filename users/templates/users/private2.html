@@ -5,7 +5,24 @@
 
 {%block content%}
 
-
+<br>
+</br>
+<nav class="raschet_kur" >
+<ul >
+    <li><a href="{% url 'private_success' day='today'%}">Сегодня</a></li>
+    <li><a href="{% url 'private_success' day='yesterday'%}">Вчера</a></li>
+    <li ><a href="{% url 'private_success' day='all'%}">Все заказы</a></li>
+   
+    <li><a href="#">Другие дни</a>
+    <ul>
+    {%for i in alldays%}
+    <li ><a href="{% url 'private_success' day=i%}">{{i}}</a></li>
+    {%endfor%}    
+    </ul>
+    </li>
+    
+</ul>
+</nav>
     <div class="lichka_prav">
         <caption>Список Выполненных Заказов</caption>
         <table  border="1" id="table_private">
@@ -28,7 +45,7 @@
                 <th>Курьер</th>
                
             </tr>
-            {%for i in orders%}
+            {%for i in orders_completed%}
             <tr>
                 <td data-label="Компания">{{i.client}}</td>
                 <td data-label="Откуда">{{i.from_address}}</td>

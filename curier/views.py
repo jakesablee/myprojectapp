@@ -60,11 +60,10 @@ def private_сurier2(request):
 
 def curier_select(request,id):
 	current_test_order = TestOrder.objects.get(pk=id)
-	
+	change = Changes.objects.create(user=request.user.mycurier,balance_before=request.user.mycurier.balance-((current_test_order.itog*35)//100),summa=((current_test_order.itog*35)//100),reason="Взял Заказ")
+	change.save()
 	current_test_order.curier = request.user.mycurier
 	current_test_order.save()
-
-
 	return redirect("private_сurier")
 	
 def curier_cancel(request,id):
